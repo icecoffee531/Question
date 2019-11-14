@@ -33,6 +33,32 @@
         </el-row>
       </div>
       <br>
+      <el-container style="box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)">
+        <br>
+        <div class="people" style="width: 100%;padding: 30px 20px;text-align: left">
+          <el-button style="float: right;padding-top: 5px" type="text" @click="edit">编辑</el-button>
+          用户名：<span>{{name}}</span>
+        </div>
+        <el-dialog title="编辑个人资料" :visible.sync="dialogTableVisible" style="text-align: left">
+          <span>用户名：{{name}}</span>
+          <el-button type="text" @click="change">修改</el-button>
+          <span :hidden="hide" style="padding: 0px 20px">
+                  <el-input type="text" style="height: 20px;width: 150px" placeholder="请输入您的用户名" v-model="newname"></el-input>
+                  <el-button type="primary" size="small" @click="name_confirm(newname)" plain>确认</el-button>
+                  <el-button type="primary" size="small" plain>取消</el-button>
+                </span>
+        </el-dialog>
+      </el-container>
+      <br>
+      <el-menu :default-active="activeIndex" class="el-menu-vertical-demo" mode="horizontal" style="box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)" router>
+        <el-menu-item index='/activities'>
+          <template slot="title"><span style="font-size: 14px;font-weight: bold">动态</span></template>
+        </el-menu-item>
+        <el-menu-item index="/answers">
+          <template slot="title"><span style="font-size: 14px;font-weight: bold">回答</span> {{answer_count}}</template>
+        </el-menu-item>
+        <el-menu-item index="/asks"><span style="font-size: 14px;font-weight: bold">提问</span> {{quit_count}}</el-menu-item>
+      </el-menu>
       <router-view></router-view>
     </el-col>
     <el-col :xs="3" :sm="6" :md="6" :lg="4" :xl="5" style="padding: 0">
@@ -87,14 +113,17 @@
 
 <script>
     export default {
-        name: "Index",
-        metaInfo: {
-            title: '首页'
-        },
-        data (){
+        name: "people",
+        data(){
             return{
                 activeIndex: this.$route.path,
                 dialogFormVisible: false,
+                dialogTableVisible: false,
+                hide: true,
+                name: '',
+                newname: '',
+                answer_count: '',
+                quit_count: '',
                 form: {
                     quest: '',
                     detail: '',
@@ -103,41 +132,19 @@
                 formLabelWidth: '120px'
             }
         },
-        methods: {
-            Quest_confirm(){
-                let params = {
-                    'quest': this.form.quest,
-                    'detail': this.form.detail
-                };
-                if (params.quest  === ''){
-                    this.$message({
-                        message: '问题不能为空',
-                        type: "warning",
-                        center: true
-                    })
-                }else {
-                    this.$axios.post('/apis/index/',params)
-                        .then(response => {
-                            console.log(response.data);
-                            if (response.data.success === 1){
-                                this.$message({
-                                    message: '发布成功',
-                                    type: 'success',
-                                    center: true
-                                });
-                                window.setTimeout("window.location='/index/'", 1000);
-                            }
-                        });
-                    this.dialogFormVisible = false;
-                    this.form.quest = '';
-                    this.form.detail= '';
-                }
+        methods:{
+            edit(){
+                this.dialogTableVisible = true;
+                this.hide = true
+            },
+            change(){
+                this.hide = false
             },
             myself(){
-              this.$router.push('/people')
+                window.location='/people'
             },
             set(){
-                this.$router.push('/setting')
+                window.location='/setting'
             },
             exit(){
                 this.$axios.post('/apis/loginout/')
@@ -147,7 +154,50 @@
                         }
                     });
             },
+            name_confirm(name){
+                let params = {
+                    name: name
+                };
+                this.$axios.post('/apis/people/',params)
+                    .then(response =>{
+                        if (response.data.status === 'exist'){
+                            this.$message({
+                                message: '用户名已存在',
+                                type: "warning",
+                                center: true
+                            })
+                        }else {
+                            this.$message({
+                                message: '用户名修改成功',
+                                type: "success",
+                                center: true
+                            });
+                            this.dialogTableVisible = false;
+                            this.name = name
+                        }
+                    })
+            }
         },
+        created() {
+            this.$axios.get('/apis/index/')
+                .then(response =>{
+                    if (response.data.status === 0){
+                        this.$router.push(response.data.url);
+                        this.$message({
+                            message: response.data.msg,
+                            type: "warning",
+                            center: true
+                        })
+                    }else{
+                        this.$axios.get('/apis/people/')
+                            .then(response=>{
+                                this.name = response.data.name;
+                                this.answer_count = response.data.answer_count;
+                                this.quit_count = response.data.quit_count;
+                            })
+                    }
+                })
+        }
     }
 </script>
 

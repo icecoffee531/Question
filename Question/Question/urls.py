@@ -21,7 +21,13 @@ from app.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('apis/login/', Login),
+    path('apis/loginout/', Loginout),
     path('apis/index/', Index),
     path('apis/regist/', regist),
-    path('apis/answer/', answer)
+    path('apis/answer_detail/', answer_detail),
+    path('apis/answer/', answer),
+    path('apis/change_password/', change_password),
+    path('apis/people/', People),
+    path('apis/delete/', Delete),
+    path('apis/change/', Change)
 ]

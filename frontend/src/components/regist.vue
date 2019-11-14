@@ -60,8 +60,8 @@
                     // isAble: true
                 },
                 rules: {
-                    user:[{required: true, message: '这是必填项', trigger: 'blur'}, {validator: user, trigger: 'blur',required: false}],
-                    password1:[{required: true, message: '这是必填项', trigger: 'blur',}, {validator: password1, trigger: 'blur'}],
+                    user:[{required: true, message: '这是必填项', trigger: 'blur'}, {validator: user, trigger: 'blur'}],
+                    password1:[{required: true, message: '这是必填项', trigger: 'blur'}, {validator: password1, trigger: 'blur'}],
                     password2:[{required: true, message: '这是必填项', trigger: 'blur'}, {validator: password1, trigger: 'blur'}],
                 },
                 isAble: true
@@ -70,9 +70,9 @@
         methods: {
             finish: function () {
                 let params = {
-                    'user': this.form.user,
-                    'password1': this.form.password1,
-                    'password2': this.form.password2
+                    user: this.form.user,
+                    password1: this.form.password1,
+                    password2: this.form.password2
                 };
                 if (params.user === '' || params.password1 === '' || params.password2 === ''){
                     this.$message({

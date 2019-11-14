@@ -41,10 +41,12 @@
         },
     methods: {
         login: function () {
+            // 获取输入的用户名和密码
             let params = {
-                'user':this.form.user,
-                'password':this.form.password
+                user: this.form.user,
+                password: this.form.password
             };
+            // 判断用户名密码状态
             if ((params.user || params.password) === ''){
                 this.$message({
                     message: '用户名密码不能为空',
@@ -52,11 +54,12 @@
                     center: true
                 });
             }else {
+                // 将用户名密码post到后端
                 this.$axios.post('/apis/login/',params)
                     .then(response => {
-                        console.log(response.data);
-                        if (response.data.code === 200){
-                            this.$router.push({path: '/index/'})
+                        // 登录成功后转到对应的路由
+                        if (response.data.status === 1){
+                            this.$router.push({path: response.data.url})
                         } else{
                             this.$message({
                                 message: '用户名或密码错误',
@@ -67,18 +70,19 @@
                     });
             }
         },
+        // 转到注册
         regist:function(){
             this.$router.push('/regist/')
         },
-        created() {
-            this.$axios.get('/apis/login/')
-                .then(response => {
-                    console.log(response.data)
-                })
-        }
     }
     }
 </script>
+
+<style>
+  .el-input__icon.el-icon-view.el-input__clear{
+    margin: 0;
+  }
+</style>
 
 <style scoped>
   #background {

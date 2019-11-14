@@ -6,6 +6,7 @@ class User(models.Model):
     uid = models.AutoField(primary_key=True)
     username = models.CharField(max_length=32)
     password = models.CharField(max_length=32)
+    permission = models.ManyToManyField(to="Permission")
 
 
 # 创建问题表
@@ -31,4 +32,3 @@ class Answer(models.Model):
 class Permission(models.Model):
     pid = models.AutoField(primary_key=True)
     permission = models.CharField(max_length=32)
-    user = models.ManyToManyField(to="User")
